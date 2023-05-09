@@ -1,0 +1,11 @@
+services:
+  ros:
+    image: ros:noetic-perception-buster
+    tty: true
+    volumes:
+      - '.:/roverswarm'
+      - '/run/user/1000:/run/user/1000'
+      - '/tmp/.X11-unix:/tmp/.X11-unix'
+    environment:
+      - DISPLAY=${DISPLAY}
+      - XDG_RUNTIME_DIR=/run/user/1000
