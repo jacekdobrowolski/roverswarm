@@ -87,7 +87,7 @@ bool Rover::teleportAbsoluteCallback(roversim::TeleportAbsolute::Request& req, r
 void Rover::rotateImage()
 {
   QTransform transform;
-  transform.rotate(-orient_ * 180.0 / PI + 90.0);
+  transform.rotate(-orient_ * 180.0 / PI);
   rover_rotated_image_ = rover_image_.transformed(transform);
 }
 
