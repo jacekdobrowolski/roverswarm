@@ -50,7 +50,9 @@ Rover::Rover(const ros::NodeHandle& nh, const QImage& rover_image, const QPointF
 , pen_on_(true)
 , pen_(QColor(DEFAULT_PEN_R, DEFAULT_PEN_G, DEFAULT_PEN_B))
 {
-  pen_.setWidth(100); // TODO: READ FROM ROS PARAMS
+  double vision_radius = 0;
+  nh_.getParam("vision_radius", vision_radius);
+  pen_.setWidth(vision_radius*2);
   pen_.setCapStyle(Qt::RoundCap);
 
   velocity_sub_ = nh_.subscribe("cmd_vel", 1, &Rover::velocityCallback, this);

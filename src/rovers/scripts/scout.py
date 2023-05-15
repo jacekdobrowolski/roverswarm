@@ -36,6 +36,7 @@ def creep_forward():
     twist.linear.y = 0.1
     while not rospy.is_shutdown():
         pub.publish(twist)
+        rospy.sleep(1)
 
 
 if __name__ == '__main__':
