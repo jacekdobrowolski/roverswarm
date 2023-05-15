@@ -32,9 +32,9 @@
 #include <QColor>
 #include <QRgb>
 
-#define DEFAULT_PEN_R 0xb3
-#define DEFAULT_PEN_G 0xb8
-#define DEFAULT_PEN_B 0xff
+#define DEFAULT_PEN_R 0xdf
+#define DEFAULT_PEN_G 0x6a
+#define DEFAULT_PEN_B 0x4d
 
 namespace roversim
 {
@@ -50,12 +50,12 @@ Rover::Rover(const ros::NodeHandle& nh, const QImage& rover_image, const QPointF
 , pen_on_(true)
 , pen_(QColor(DEFAULT_PEN_R, DEFAULT_PEN_G, DEFAULT_PEN_B))
 {
-  pen_.setWidth(3);
+  pen_.setWidth(100); // TODO: READ FROM ROS PARAMS
+  pen_.setCapStyle(Qt::RoundCap);
 
   velocity_sub_ = nh_.subscribe("cmd_vel", 1, &Rover::velocityCallback, this);
   pose_pub_ = nh_.advertise<Pose>("pose", 1);
   color_pub_ = nh_.advertise<Color>("color_sensor", 1);
-  set_pen_srv_ = nh_.advertiseService("set_pen", &Rover::setPenCallback, this);
   teleport_relative_srv_ = nh_.advertiseService("teleport_relative", &Rover::teleportRelativeCallback, this);
   teleport_absolute_srv_ = nh_.advertiseService("teleport_absolute", &Rover::teleportAbsoluteCallback, this);
 
@@ -70,24 +70,6 @@ void Rover::velocityCallback(const geometry_msgs::Twist::ConstPtr& vel)
   lin_vel_x_ = vel->linear.x;
   lin_vel_y_ = vel->linear.y;
   ang_vel_ = vel->angular.z;
-}
-
-bool Rover::setPenCallback(roversim::SetPen::Request& req, roversim::SetPen::Response&)
-{
-  pen_on_ = !req.off;
-  if (req.off)
-  {
-    return true;
-  }
-
-  QPen pen(QColor(req.r, req.g, req.b));
-  if (req.width != 0)
-  {
-    pen.setWidth(req.width);
-  }
-
-  pen_ = pen;
-  return true;
 }
 
 bool Rover::teleportRelativeCallback(roversim::TeleportRelative::Request& req, roversim::TeleportRelative::Response&)

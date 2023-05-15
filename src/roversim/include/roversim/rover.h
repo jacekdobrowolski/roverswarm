@@ -62,7 +62,6 @@ public:
   void paint(QPainter &painter);
 private:
   void velocityCallback(const geometry_msgs::Twist::ConstPtr& vel);
-  bool setPenCallback(roversim::SetPen::Request&, roversim::SetPen::Response&);
   bool teleportRelativeCallback(roversim::TeleportRelative::Request&, roversim::TeleportRelative::Response&);
   bool teleportAbsoluteCallback(roversim::TeleportAbsolute::Request&, roversim::TeleportAbsolute::Response&);
 
@@ -85,7 +84,6 @@ private:
   ros::Subscriber velocity_sub_;
   ros::Publisher pose_pub_;
   ros::Publisher color_pub_;
-  ros::ServiceServer set_pen_srv_;
   ros::ServiceServer teleport_relative_srv_;
   ros::ServiceServer teleport_absolute_srv_;
 

@@ -1,11 +1,11 @@
 #include <boost/bind/bind.hpp>
 #include <ros/ros.h>
-#include <turtlesim/Pose.h>
+#include <roversim/Pose.h>
 #include <geometry_msgs/Twist.h>
 #include <std_srvs/Empty.h>
 
-turtlesim::PoseConstPtr g_pose;
-turtlesim::Pose g_goal;
+roversim::PoseConstPtr g_pose;
+roversim::Pose g_goal;
 
 enum State
 {
@@ -21,7 +21,7 @@ bool g_first_goal_set = false;
 
 #define PI 3.141592
 
-void poseCallback(const turtlesim::PoseConstPtr& pose)
+void poseCallback(const roversim::PoseConstPtr& pose)
 {
   g_pose = pose;
 }
@@ -41,7 +41,7 @@ void printGoal()
   ROS_INFO("New goal [%f %f, %f]", g_goal.x, g_goal.y, g_goal.theta);
 }
 
-void commandTurtle(ros::Publisher twist_pub, float linear, float angular)
+void commandRover(ros::Publisher twist_pub, float linear, float angular)
 {
   geometry_msgs::Twist twist;
   twist.linear.x = linear;
@@ -64,7 +64,7 @@ void stopForward(ros::Publisher twist_pub)
   }
   else
   {
-    commandTurtle(twist_pub, 0, 0);
+    commandRover(twist_pub, 0, 0);
   }
 }
 
@@ -81,7 +81,7 @@ void stopTurn(ros::Publisher twist_pub)
   }
   else
   {
-    commandTurtle(twist_pub, 0, 0);
+    commandRover(twist_pub, 0, 0);
   }
 }
 
@@ -91,11 +91,11 @@ void forward(ros::Publisher twist_pub)
   if (hasReachedGoal())
   {
     g_state = STOP_FORWARD;
-    commandTurtle(twist_pub, 0, 0);
+    commandRover(twist_pub, 0, 0);
   }
   else
   {
-    commandTurtle(twist_pub, 1.0, 0.0);
+    commandRover(twist_pub, 1.0, 0.0);
   }
 }
 
@@ -104,11 +104,11 @@ void turn(ros::Publisher twist_pub)
   if (hasReachedGoal())
   {
     g_state = STOP_TURN;
-    commandTurtle(twist_pub, 0, 0);
+    commandRover(twist_pub, 0, 0);
   }
   else
   {
-    commandTurtle(twist_pub, 0.0, 0.4);
+    commandRover(twist_pub, 0.0, 0.4);
   }
 }
 
@@ -151,8 +151,8 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "draw_square");
   ros::NodeHandle nh;
-  ros::Subscriber pose_sub = nh.subscribe("turtle1/pose", 1, poseCallback);
-  ros::Publisher twist_pub = nh.advertise<geometry_msgs::Twist>("turtle1/cmd_vel", 1);
+  ros::Subscriber pose_sub = nh.subscribe("rover1/pose", 1, poseCallback);
+  ros::Publisher twist_pub = nh.advertise<geometry_msgs::Twist>("rover1/cmd_vel", 1);
   ros::ServiceClient reset = nh.serviceClient<std_srvs::Empty>("reset");
   ros::Timer timer = nh.createTimer(ros::Duration(0.016), boost::bind(timerCallback, boost::placeholders::_1, twist_pub));
 
