@@ -1,8 +1,0 @@
-<launch>
-	<group ns="roversim1">
-	       <node pkg="roversim" name="sim" type="roversim_node"/>
-	</group>
-	<group ns="roversim2">
-	       <node pkg="roversim" name="sim" type="roversim_node"/>
-	</group>
-</launch>

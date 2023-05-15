@@ -99,7 +99,7 @@ RoverFrame::RoverFrame(QWidget* parent, Qt::WindowFlags f)
 
   width_in_meters_ = (width() - 1) / meter_;
   height_in_meters_ = (height() - 1) / meter_;
-  spawnRover("", width_in_meters_ / 2.0, height_in_meters_ / 2.0, PI / 2.0);
+  // spawnRover("", width_in_meters_ / 2.0, height_in_meters_ / 2.0, PI / 2.0);
 
   // spawn all available rover types
   if(false)
@@ -263,7 +263,7 @@ bool RoverFrame::resetCallback(std_srvs::Empty::Request&, std_srvs::Empty::Respo
   ROS_INFO("Resetting roversim.");
   rovers_.clear();
   id_counter_ = 0;
-  spawnRover("", width_in_meters_ / 2.0, height_in_meters_ / 2.0, 0);
+  // spawnRover("", width_in_meters_ / 2.0, height_in_meters_ / 2.0, 0);
   clear();
   return true;
 }
