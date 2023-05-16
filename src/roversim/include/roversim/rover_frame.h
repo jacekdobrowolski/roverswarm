@@ -53,7 +53,7 @@ class RoverFrame : public QFrame
 {
   Q_OBJECT
 public:
-  RoverFrame(QWidget* parent = 0, Qt::WindowFlags f = 0);
+  RoverFrame(int frame_width, int frame_height, QWidget* parent = 0, Qt::WindowFlags f = 0);
   ~RoverFrame();
 
   std::string spawnRover(const std::string& name, float x, float y, float angle);

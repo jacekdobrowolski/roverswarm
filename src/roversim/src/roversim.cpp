@@ -37,17 +37,31 @@ class RoverApp : public QApplication
 {
 public:
   ros::NodeHandlePtr nh_;
+  int width = 800;
+  int height = 800;
+
 
   RoverApp(int& argc, char** argv)
     : QApplication(argc, argv)
   {
     ros::init(argc, argv, "roversim", ros::init_options::NoSigintHandler);
     nh_.reset(new ros::NodeHandle);
+
+    std::string width_param_name;
+    if (nh_->searchParam("width", width_param_name)) {
+      nh_->getParam(width_param_name, width);
+
+    }
+    std::string height_param_name;
+    if (nh_->searchParam("height", height_param_name)) {
+      nh_->getParam(height_param_name, height);
+    }
+    ROS_INFO("Setting frame size to %d, %d", width, height);
   }
 
   int exec()
   {
-    roversim::RoverFrame frame;
+    roversim::RoverFrame frame(width, height);
     frame.show();
 
     return QApplication::exec();

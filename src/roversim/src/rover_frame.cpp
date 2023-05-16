@@ -42,15 +42,15 @@
 namespace roversim
 {
 
-RoverFrame::RoverFrame(QWidget* parent, Qt::WindowFlags f)
+RoverFrame::RoverFrame(int frame_width, int frame_height, QWidget* parent, Qt::WindowFlags f)
 : QFrame(parent, f)
-, path_image_(800, 800, QImage::Format_ARGB32)
+, path_image_(frame_width, frame_height, QImage::Format_ARGB32)
 , path_painter_(&path_image_)
 , frame_count_(0)
 , id_counter_(0)
 , private_nh_("~")
 {
-  setFixedSize(800, 800);
+  setFixedSize(frame_width, frame_height);
   setWindowTitle("RoverSim");
 
   srand(time(NULL));
