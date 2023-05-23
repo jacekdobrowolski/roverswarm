@@ -33,7 +33,7 @@ def kill_rover():
 def creep_forward():
     pub = rospy.Publisher(rover_name + '/cmd_vel', Twist, queue_size=1)
     twist = Twist()
-    twist.linear.y = 0.1
+    twist.linear.y = 10
     while not rospy.is_shutdown():
         pub.publish(twist)
         rospy.sleep(1)

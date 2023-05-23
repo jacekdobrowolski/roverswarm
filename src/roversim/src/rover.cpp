@@ -61,7 +61,7 @@ Rover::Rover(const ros::NodeHandle& nh, const QImage& rover_image, const QPointF
   teleport_relative_srv_ = nh_.advertiseService("teleport_relative", &Rover::teleportRelativeCallback, this);
   teleport_absolute_srv_ = nh_.advertiseService("teleport_absolute", &Rover::teleportAbsoluteCallback, this);
 
-  meter_ = rover_image_.height();
+  meter_ = 1;
   rotateImage();
 }
 
