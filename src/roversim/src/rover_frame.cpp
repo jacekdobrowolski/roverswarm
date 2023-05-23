@@ -86,7 +86,7 @@ RoverFrame::RoverFrame(int frame_width, int frame_height, QWidget* parent, Qt::W
     rover_images_.append(img);
   }
 
-  meter_ = rover_images_[0].height();
+  meter_ = 1;
 
   clear();
 
