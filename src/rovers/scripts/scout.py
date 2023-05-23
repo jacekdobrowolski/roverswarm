@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 import rospy
 from geometry_msgs.msg import Twist
+from roversim.msg import Pose
 
 from roversim.srv import Kill, Spawn
 
 
 class Scout:
     def __init__(self):
+        rospy.loginfo(f"{dir(rospy)}")
+        self.x, self.y = self.get_initial_position()
         self.command_publisher = self.attach_to_roversim()
         rospy.on_shutdown(self.detach_from_roversim)
         self.creep_forward()
@@ -25,6 +28,7 @@ class Scout:
             rospy.logerr("Service did not process request: " + str(exc))
             rospy.signal_shutdown()
         command_publisher = rospy.Publisher(rover_name + '/cmd_vel', Twist, queue_size=1)
+        rospy.Subscriber(rover_name + '/pose', Pose, self.update_position)
         return command_publisher
 
 
@@ -36,13 +40,28 @@ class Scout:
         except rospy.ServiceException as exc:
             rospy.logerr("Service did not process request: " + str(exc))
 
+    def get_initial_position(self):
+        x_param_name = rospy.search_param('start_position/x')
+        x = rospy.get_param(x_param_name)
+        y_param_name = rospy.search_param('start_position/y')
+        y = rospy.get_param(y_param_name)
+        return x, y
+
+
+    def update_position(self, pose):
+        self.x = int(pose.x)
+        self.y = int(pose.y)
+
 
     def creep_forward(self):
         twist = Twist()
         twist.linear.y = 10
         while not rospy.is_shutdown():
-            self.command_publisher.publish(twist)
-            rospy.sleep(1)
+            if self.y < 600:
+                self.command_publisher.publish(twist)
+                rospy.sleep(1)
+            else:
+                rospy.signal_shutdown()
 
 
 if __name__ == '__main__':
