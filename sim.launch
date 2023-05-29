@@ -2,6 +2,7 @@
 	<group ns="roversim">
         <param name="width" type="int" value="800" />
         <param name="height" type="int" value="800" />
+        <rosparam command="load" file="params.yaml" />
         <node pkg="roversim" type="roversim_node" name="sim" required="true" output="screen">
         </node>
         <node pkg="rovertelemetry" type="exploration_area.py" name="exploration_area_telemetry" output="screen"/>

@@ -67,6 +67,7 @@ private slots:
 
 private:
   void updateRovers();
+  void updateTargets();
   void clear();
   bool hasRover(const std::string& name);
 
@@ -80,6 +81,9 @@ private:
   QTimer* update_timer_;
   QImage path_image_;
   QPainter path_painter_;
+  QPainter target_painter_;
+
+  QPen target_pen_;
 
   uint64_t frame_count_;
 
