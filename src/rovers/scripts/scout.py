@@ -1,18 +1,20 @@
 #!/usr/bin/env python
+from threading import Lock
+import numpy as np
 import rospy
 from geometry_msgs.msg import Twist
 from roversim.msg import Pose
-
 from roversim.srv import Kill, Spawn
 
 
 class Scout:
     def __init__(self):
         rospy.loginfo(f"{dir(rospy)}")
-        self.x, self.y = self.get_initial_position()
+        self.position_lock = Lock()
+        self.position = self.get_initial_position()
         self.command_publisher = self.attach_to_roversim()
         rospy.on_shutdown(self.detach_from_roversim)
-        self.creep_forward()
+        self.go_to_target(500, 500)
 
 
     def attach_to_roversim(self):
@@ -40,29 +42,51 @@ class Scout:
         except rospy.ServiceException as exc:
             rospy.logerr("Service did not process request: " + str(exc))
 
+
     def get_initial_position(self):
         x_param_name = rospy.search_param('start_position/x')
         x = rospy.get_param(x_param_name)
         y_param_name = rospy.search_param('start_position/y')
         y = rospy.get_param(y_param_name)
-        return x, y
+        return np.array([x, y])
 
 
-    def update_position(self, pose):
-        self.x = int(pose.x)
-        self.y = int(pose.y)
+    def update_position(self, pose) -> np.ndarray:
+        with self.position_lock:
+            rospy.loginfo("Updating pose to self.pose{pose.x} {pose.y}")
+            self.position[0] = int(pose.x)
+            self.position[1] = int(pose.y)
 
 
     def creep_forward(self):
         twist = Twist()
         twist.linear.y = 10
         while not rospy.is_shutdown():
-            if self.y < 600:
+            if self.position[1] < 600:
                 self.command_publisher.publish(twist)
                 rospy.sleep(1)
             else:
                 rospy.signal_shutdown()
 
+
+    def go_to_target(self, target_x, target_y):
+        while not rospy.is_shutdown():
+            target = np.array([target_x, target_y])
+            twist = Twist()
+            with self.position_lock:
+                if np.allclose(self.position, target, rtol=0.01):
+                    twist.linear.x = 0
+                    twist.linear.y = 0
+                else:
+                    diff = target - self.position
+                    diff = diff/np.linalg.norm(diff) * 10
+                    rospy.loginfo(f"scout - {target} - {self.position} = {diff}")
+                    twist.linear.x = diff[0]
+                    twist.linear.y = diff[1]
+
+            self.command_publisher.publish(twist)
+            rospy.sleep(1)
+        
 
 if __name__ == '__main__':
     rospy.init_node('scout')
