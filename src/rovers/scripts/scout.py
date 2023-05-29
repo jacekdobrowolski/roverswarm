@@ -9,7 +9,6 @@ from roversim.srv import Kill, Spawn
 
 class Scout:
     def __init__(self):
-        rospy.loginfo(f"{dir(rospy)}")
         self.position_lock = Lock()
         self.position = self.get_initial_position()
         self.command_publisher = self.attach_to_roversim()
@@ -53,7 +52,6 @@ class Scout:
 
     def update_position(self, pose) -> np.ndarray:
         with self.position_lock:
-            rospy.loginfo("Updating pose to self.pose{pose.x} {pose.y}")
             self.position[0] = int(pose.x)
             self.position[1] = int(pose.y)
 
@@ -80,7 +78,6 @@ class Scout:
                 else:
                     diff = target - self.position
                     diff = diff/np.linalg.norm(diff) * 10
-                    rospy.loginfo(f"scout - {target} - {self.position} = {diff}")
                     twist.linear.x = diff[0]
                     twist.linear.y = diff[1]
 
