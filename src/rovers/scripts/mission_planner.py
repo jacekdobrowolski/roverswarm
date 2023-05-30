@@ -6,7 +6,7 @@ import numpy as np
 from scipy.optimize import linear_sum_assignment
 import rospy
 
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool
 from rovers.msg import Target
 from rovers.srv import AddToSwarm, AddToSwarmResponse
 from roversim.msg import Pose
@@ -67,12 +67,19 @@ class MissionPlanner():
             target = Target(*self.targets[target_index])
             with rover.lock:
                 rover.rover_target_publisher.publish(target)
-                log(f'{rover.name} {rover.position} -> {self.targets[target_index]} = {cost_matrix[rover_index][rover_index]}')
-        log(f'targets calculated cost: {cost_matrix[rover_indexes, target_indexes].sum()}')
+                # log(f'{rover.name} {rover.position} -> {self.targets[target_index]} = {cost_matrix[rover_index][rover_index]}')
+        # log(f'targets calculated cost: {cost_matrix[rover_indexes, target_indexes].sum()}')
 
     def subscribe_targets_done(self):
         rospy.Subscriber('/target_done', Target, self.target_done_callback)
         log(f'subscribed to target_done')
+
+    def end_mission(self):
+        save_publisher = rospy.Publisher('/save_sim', Bool, queue_size=1)
+        save_publisher.publish(Bool(True))
+        log('all targets reached shuting down')
+        rospy.sleep(1)
+        rospy.signal_shutdown("All targets reached")
 
     def target_done_callback(self, target_done_request):
         target_done = np.zeros((2), dtype=int)
@@ -81,10 +88,14 @@ class MissionPlanner():
         with self.targets_lock:
             try:
                 for i , target in enumerate(self.targets):
-                    if np.allclose(target, target_done, atol=20):
+                    if np.allclose(target, target_done, atol=2):
                         self.targets.pop(i)
-                        log(f'deleted {target_done} targets length: {len(self.targets)}')
-                        self.assign_targets()
+                        log(f'targets left: {len(self.targets)}')
+                        if self.targets:
+                            self.assign_targets()
+                        else:
+                            self.end_mission()
+
             except ValueError as e:
                 rospy.logerr(f'{e}')
 

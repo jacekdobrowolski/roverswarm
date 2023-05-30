@@ -8,29 +8,29 @@
         <node pkg="rovertelemetry" type="exploration_area.py" name="exploration_area_telemetry" output="screen"/>
         <node pkg="rovers" type="scout.py" name="scout1" output="screen">
             <param name="vision_radius" type="double" value="50" />
-            <param name="start_position/x" type="int" value="400" />
-            <param name="start_position/y" type="int" value="400" />
+            <param name="start_position/x" type="int" value="350" />
+            <param name="start_position/y" type="int" value="350" />
         </node>
         <node pkg="rovers" type="scout.py" name="scout2" output="screen">
             <param name="vision_radius" type="double" value="50" />
-            <param name="start_position/x" type="int" value="400" />
-            <param name="start_position/y" type="int" value="300" />
+            <param name="start_position/x" type="int" value="350" />
+            <param name="start_position/y" type="int" value="350" />
         </node>
         <node pkg="rovers" type="scout.py" name="scout3" output="screen">
             <param name="vision_radius" type="double" value="50" />
-            <param name="start_position/x" type="int" value="400" />
-            <param name="start_position/y" type="int" value="500" />
+            <param name="start_position/x" type="int" value="350" />
+            <param name="start_position/y" type="int" value="350" />
         </node>
         <node pkg="rovers" type="scout.py" name="scout4" output="screen">
             <param name="vision_radius" type="double" value="50" />
-            <param name="start_position/x" type="int" value="100" />
-            <param name="start_position/y" type="int" value="100" />
+            <param name="start_position/x" type="int" value="350" />
+            <param name="start_position/y" type="int" value="350" />
         </node>
         <node pkg="rovers" type="scout.py" name="scout5" output="screen">
             <param name="vision_radius" type="double" value="50" />
-            <param name="start_position/x" type="int" value="600" />
-            <param name="start_position/y" type="int" value="600" />
+            <param name="start_position/x" type="int" value="350" />
+            <param name="start_position/y" type="int" value="350" />
         </node>
-        <node pkg="rovers" type="mission_planner.py" name="mission_planner" output="screen"/>
+        <node pkg="rovers" type="mission_planner.py" name="mission_planner" required="true" output="screen"/>
 	</group>
 </launch>

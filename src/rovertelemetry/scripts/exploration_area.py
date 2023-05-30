@@ -2,6 +2,7 @@
 from functools import partial
 from queue import Empty, Queue
 from threading import Thread
+import os
 
 import cv2
 import numpy as np
@@ -9,6 +10,7 @@ import rospy
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
 
+from std_msgs.msg import Bool
 from roversim.msg import Pose
 
 
@@ -61,27 +63,36 @@ def accumulate(rover_movement_queue, area_request_queue, area_queue):
 
 def draw_plot(area_request_queue, area_queue):
     rospy.loginfo(f"exploration_area - draw_plot Thread started")
-    fig = plt.figure(figsize=(8, 6))
+    figure = plt.figure(figsize=(8, 6))
     x = [0]
     y = [0]
     ax = plt.subplot(111, title='Exploration area')
+    area_dump_file_path = f'/roverswarm/results/{rospy.get_time()}-sim.csv'
+    rospy.loginfo(f'{rospy.get_name()} - creating file {os.path.join(os.getcwd(), area_dump_file_path)}')
+    with open(area_dump_file_path, 'w') as file:
+        file.writelines('rospy.time, area\n')
 
     def update(frames):
         area_request_queue.put(item=True)
-        try:
-            area = area_queue.get(timeout=1)
-            x.append(x[-1] + 1)
-            y.append(area)
-        
-            ax.plot(x, y, 'b-') 
-        except Empty as e:
-            rospy.loginfo(f"exploration_area - plot area_queue timeout")
-        finally:
-            return ax
+        with open(area_dump_file_path, 'a') as file:
+            try:
+                area = area_queue.get(timeout=1)
+                file.writelines(f'{rospy.get_rostime()}, {area}\n')
+                x.append(x[-1] + 1)
+                y.append(area)
+            
+                ax.plot(x, y, 'b-') 
+            except Empty as e:
+                rospy.loginfo(f"exploration_area - plot area_queue timeout")
+            finally:
+                return ax
 
-    ani = FuncAnimation(fig, update, interval=1000)
+    ani = FuncAnimation(figure, update, interval=1000)
     plt.show()
     
+def save_sim_callback(figure, data):
+    rospy.signal_shutdown()
+
 
 if __name__ == '__main__':
     rospy.init_node('exploration_area', anonymous=True)
@@ -96,10 +107,13 @@ if __name__ == '__main__':
     )
     accumualte_thread.start()
 
+
     draw_plot_thread = Thread(
         target=draw_plot,
-        args=(area_request_queue, area_queue, )
+        args=(area_request_queue, area_queue)
     )
     draw_plot_thread.start()
+
+    rospy.Subscriber('/save_sim', Bool, partial(save_sim_callback))
 
     capture_topics(rover_movement_queue)

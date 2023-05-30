@@ -91,8 +91,8 @@ class Scout:
             self.target[0] = int(target.x)
             self.target[1] = int(target.y)
         self.target_reached = False
-        with self.position_lock:
-            log(f'new target {self.target} <- {self.position}')
+        # with self.position_lock:
+        #     log(f'new target {self.target} <- {self.position}')
 
     def creep_forward(self):
         twist = Twist()
@@ -111,12 +111,11 @@ class Scout:
             if not self.target_reached:
                 with self.target_lock:
                     with self.position_lock:
-                        if np.allclose(self.position, self.target, atol=2):
+                        if np.allclose(self.position, self.target, atol=1):
                             twist.linear.x = 0
                             twist.linear.y = 0
                             self.target_done_publisher.publish(Target(*self.target))
                             self.target_reached = True
-                            log(' target done let me goooooooooo')
                         else:
                             diff = self.target - self.position
                             diff = diff/np.linalg.norm(diff) * 20
