@@ -45,7 +45,7 @@ def accumulate(rover_movement_queue, area_request_queue, area_queue):
     
     while not rospy.is_shutdown():
         try:
-            x, y, vision_radius = rover_movement_queue.get(timeout=3)
+            x, y, vision_radius = rover_movement_queue.get(timeout=1)
             message_counter += 1
             cv2.circle(canvas, (x, y), radius=vision_radius, color=255, thickness=-1)
         except Empty:
@@ -69,7 +69,7 @@ def draw_plot(area_request_queue, area_queue):
     def update(frames):
         area_request_queue.put(item=True)
         try:
-            area = area_queue.get(timeout=3)
+            area = area_queue.get(timeout=1)
             x.append(x[-1] + 1)
             y.append(area)
         
