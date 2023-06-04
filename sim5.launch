@@ -1,0 +1,36 @@
+<launch>
+	<group ns="roversim">
+        <param name="width" type="int" value="700" />
+        <param name="height" type="int" value="700" />
+        <rosparam command="load" file="params.yaml" />
+        <node pkg="roversim" type="roversim_node" name="sim" required="true" output="screen">
+        </node>
+        <node pkg="rovertelemetry" type="exploration_area.py" name="exploration_area_telemetry.5" output="screen"/>
+        <node pkg="rovers" type="scout.py" name="scout1" output="screen">
+            <param name="vision_radius" type="double" value="50" />
+            <param name="start_position/x" type="int" value="116" />
+            <param name="start_position/y" type="int" value="350" />
+        </node>
+        <node pkg="rovers" type="scout.py" name="scout2" output="screen">
+            <param name="vision_radius" type="double" value="50" />
+            <param name="start_position/x" type="int" value="232" />
+            <param name="start_position/y" type="int" value="350" />
+        </node>
+        <node pkg="rovers" type="scout.py" name="scout3" output="screen">
+            <param name="vision_radius" type="double" value="50" />
+            <param name="start_position/x" type="int" value="350" />
+            <param name="start_position/y" type="int" value="350" />
+        </node>
+        <node pkg="rovers" type="scout.py" name="scout4" output="screen">
+            <param name="vision_radius" type="double" value="50" />
+            <param name="start_position/x" type="int" value="464" />
+            <param name="start_position/y" type="int" value="350" />
+        </node>
+        <node pkg="rovers" type="scout.py" name="scout5" output="screen">
+            <param name="vision_radius" type="double" value="50" />
+            <param name="start_position/x" type="int" value="580" />
+            <param name="start_position/y" type="int" value="350" />
+        </node>
+        <node pkg="rovers" type="mission_planner.py" name="mission_planner" required="true" output="screen"/>
+	</group>
+</launch>

@@ -67,7 +67,8 @@ def draw_plot(area_request_queue, area_queue):
     x = [0]
     y = [0]
     ax = plt.subplot(111, title='Exploration area')
-    area_dump_file_path = f'/roverswarm/results/{rospy.get_time()}-sim.csv'
+    sim_size = rospy.get_name().split('.')[-1]
+    area_dump_file_path = f'/roverswarm/results/{rospy.get_time()}.{sim_size}.csv'
     rospy.loginfo(f'{rospy.get_name()} - creating file {os.path.join(os.getcwd(), area_dump_file_path)}')
     with open(area_dump_file_path, 'w') as file:
         file.writelines('rospy.time, area\n')
