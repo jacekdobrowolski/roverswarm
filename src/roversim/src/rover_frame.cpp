@@ -274,7 +274,7 @@ void RoverFrame::updateTargets()
         int target_y = targets[i]["y"];
         // ROS_INFO("rover_frame target%d x: %d, y: %d", i, target_x, target_y);
           path_painter_.setPen(target_pen_);
-          path_painter_.drawPoint(QPoint(target_x, target_y));
+          path_painter_.drawPoint(QPoint(target_x, height()-target_y));
       }
       
     } else {

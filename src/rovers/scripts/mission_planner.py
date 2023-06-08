@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from threading import Lock
 from functools import partial
+import os
 
 import numpy as np
 from scipy.optimize import linear_sum_assignment
@@ -75,6 +76,13 @@ class MissionPlanner():
         log(f'subscribed to target_done')
 
     def end_mission(self):
+        sim_size_param_name = rospy.search_param('sim_size')
+        sim_size = rospy.get_param(sim_size_param_name)
+        area_dump_file_path = f'/roverswarm/results/{sim_size}.csv'
+        rospy.loginfo(f'{rospy.get_name()} - creating file {os.path.join(os.getcwd(), area_dump_file_path)}')
+        with open(area_dump_file_path, 'a') as file:
+            file.writelines(f'{sim_size}, {self.sim_end_time - self.sim_start_time}\n')
+
         save_publisher = rospy.Publisher('/save_sim', Bool, queue_size=1)
         save_publisher.publish(Bool(True))
         log('all targets reached shuting down')
@@ -94,6 +102,7 @@ class MissionPlanner():
                         if self.targets:
                             self.assign_targets()
                         else:
+                            self.sim_end_time = rospy.get_rostime()
                             self.end_mission()
 
             except ValueError as e:
@@ -108,6 +117,7 @@ class MissionPlanner():
         self.get_targets()
         rospy.sleep(2)
         with self.targets_lock:
+            self.sim_start_time = rospy.get_rostime()
             self.assign_targets()
 
         self.subscribe_targets_done()
