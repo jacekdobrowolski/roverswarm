@@ -41,10 +41,10 @@
 #define DEFAULT_BG_G 52
 #define DEFAULT_BG_B 24
 
-#define DEFAULT_TARGET_R 71
-#define DEFAULT_TARGET_G 169
-#define DEFAULT_TARGET_B 146
-#define TARGET_SIZE 5
+#define DEFAULT_TARGET_R 0
+#define DEFAULT_TARGET_G 0
+#define DEFAULT_TARGET_B 0
+#define TARGET_SIZE 10
 
 namespace roversim
 {
