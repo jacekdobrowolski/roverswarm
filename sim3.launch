@@ -7,7 +7,7 @@
         <rosparam command="load" file="$(arg targets)" />
         <node pkg="roversim" type="roversim_node" name="sim" required="true" output="screen">
         </node>
-        <!-- <node pkg="rovertelemetry" type="exploration_area.py" name="exploration_area_telemetry.3" output="screen"/> -->
+        <node pkg="rovertelemetry" type="exploration_area.py" name="exploration_area_telemetry.3" output="screen"/>
         <node pkg="rovers" type="scout.py" name="scout1" output="screen">
             <param name="vision_radius" type="double" value="50" />
             <param name="start_position/x" type="int" value="175" />
