@@ -1,0 +1,4 @@
+std_msgs/String rover_pose_channel
+---
+
+std_msgs/String rover_target_channel

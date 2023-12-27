@@ -115,7 +115,7 @@ bool Rover::update(double dt, QPainter& path_painter, const QImage& path_image, 
     else
     {
       pos_.setX(req.pos.x());
-      pos_.setY(std::max(0.0, static_cast<double>(canvas_height - req.pos.y())));
+      pos_.setY(std::max(0.0, static_cast<double>(req.pos.y())));
       orient_ = req.theta;
     }
 

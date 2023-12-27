@@ -35,9 +35,16 @@
 #include <cstdlib>
 #include <ctime>
 
+# include <xmlrpcpp/XmlRpcValue.h>
+
 #define DEFAULT_BG_R 163
 #define DEFAULT_BG_G 52
 #define DEFAULT_BG_B 24
+
+#define DEFAULT_TARGET_R 0
+#define DEFAULT_TARGET_G 0
+#define DEFAULT_TARGET_B 0
+#define TARGET_SIZE 10
 
 namespace roversim
 {
@@ -46,10 +53,14 @@ RoverFrame::RoverFrame(int frame_width, int frame_height, QWidget* parent, Qt::W
 : QFrame(parent, f)
 , path_image_(frame_width, frame_height, QImage::Format_ARGB32)
 , path_painter_(&path_image_)
+, target_pen_(QColor(DEFAULT_TARGET_R, DEFAULT_TARGET_G, DEFAULT_TARGET_B))
 , frame_count_(0)
 , id_counter_(0)
 , private_nh_("~")
 {
+  target_pen_.setWidth(TARGET_SIZE);
+  target_pen_.setCapStyle(Qt::RoundCap);
+
   setFixedSize(frame_width, frame_height);
   setWindowTitle("RoverSim");
 
@@ -204,7 +215,7 @@ void RoverFrame::clear()
 void RoverFrame::onUpdate()
 {
   ros::spinOnce();
-
+  updateTargets();
   updateRovers();
 
   if (!ros::ok())
@@ -250,6 +261,29 @@ void RoverFrame::updateRovers()
   ++frame_count_;
 }
 
+
+void RoverFrame::updateTargets()
+{
+  ros::NodeHandle nh;
+  XmlRpc::XmlRpcValue targets;
+  bool targets_param_ok = nh.getParam("targets", targets);
+  if (targets_param_ok) {
+    if(targets.getType() == XmlRpc::XmlRpcValue::Type::TypeArray && targets.size() > 0){
+      for (size_t i = 0; i < targets.size(); ++i ) {     
+        int target_x = targets[i]["x"];
+        int target_y = targets[i]["y"];
+        // ROS_INFO("rover_frame target%d x: %d, y: %d", i, target_x, target_y);
+          path_painter_.setPen(target_pen_);
+          path_painter_.drawPoint(QPoint(target_x, height()-target_y));
+      }
+      
+    } else {
+      ROS_INFO("rover_frame -- targets param empty");
+    }
+  } else {
+    ROS_INFO("roversim_frame -- targets param not found"); 
+  }
+}
 
 bool RoverFrame::clearCallback(std_srvs::Empty::Request&, std_srvs::Empty::Response&)
 {

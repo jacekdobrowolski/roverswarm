@@ -2,17 +2,22 @@
 	<group ns="roversim">
         <param name="width" type="int" value="700" />
         <param name="height" type="int" value="700" />
-        <param name="sim_size" type="int" value="1" />
+        <param name="sim_size" type="int" value="2" />
         <arg name ="targets" doc="yaml file with targets" />
         <rosparam command="load" file="$(arg targets)" />
         <node pkg="roversim" type="roversim_node" name="sim" required="true" output="screen">
         </node>
-        <node pkg="rovertelemetry" type="exploration_area.py" name="exploration_area_telemetry.1" output="screen"/>
+        <node pkg="rovertelemetry" type="exploration_area.py" name="exploration_area_telemetry.2" output="screen"/>
         <node pkg="rovers" type="scout.py" name="scout1" output="screen">
             <param name="vision_radius" type="double" value="50" />
-            <param name="start_position/x" type="int" value="350" />
+            <param name="start_position/x" type="int" value="233" />
             <param name="start_position/y" type="int" value="350" />
         </node>
+        <node pkg="rovers" type="scout.py" name="scout2" output="screen">
+            <param name="vision_radius" type="double" value="50" />
+            <param name="start_position/x" type="int" value="466" />
+            <param name="start_position/y" type="int" value="350" />
+        </node> 
         <node pkg="rovers" type="mission_planner.py" name="mission_planner" required="true" output="screen"/>
 	</group>
 </launch>
